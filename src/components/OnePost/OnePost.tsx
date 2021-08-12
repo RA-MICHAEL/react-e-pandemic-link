@@ -25,50 +25,57 @@ import './OnePost.css'
 
 
 export default class OnePost extends React.Component<{ currentPost: Post }> {
-    // classes = useStyles();
-    // const [expanded, setExpanded] = React.useState(false);
-    // const [like, setLike] = React.useState(false);
-    // const [dislike, setDislike] = React.useState(false);
 
     static contextType = MyContext;
 
     state = {
         expanded: false,
-        like: false,
-        dislike: false
+        isLiked: false,
+        isDisliked: false
     }
 
-    handleExpandClick = () => {
+    handleExpandClick() {
         this.setState({
             expanded: !this.state.expanded
-        });
-    };
+        })
+    }
 
-    handleLike = () => {
+    handleLike() {
         this.setState({
-            like: !this.state.like,
+            isLiked: !(this.state.isLiked)
         });
-        if (!this.state.like) {
+        console.log("Eto tsika" + this.state.isLiked);
+        if (this.state.isLiked) {
             this.props.currentPost.likes++;
-
+            if (this.state.isDisliked) {
+                this.props.currentPost.dislikes--;
+                this.setState({
+                    isDislike: false
+                })
+            }
         }
         else {
             this.props.currentPost.likes--;
         }
-    };
+    }
 
-    handleDislike = () => {
+    handleDislike() {
         this.setState({
-            dislike: !this.state.dislike,
-        });
-        if (this.state.like) {
+            isDisliked: !this.state.isLiked
+        })
+        if (this.state.isDisliked) {
             this.props.currentPost.dislikes++;
-
+            if (this.state.isLiked) {
+                this.props.currentPost.likes--;
+                this.setState({
+                    isLiked: false
+                })
+            }
         }
         else {
             this.props.currentPost.dislikes--;
         }
-    };
+    }
 
     render() {
         let olona: User = this.context.getUserById(this.props.currentPost.userId);
@@ -76,9 +83,7 @@ export default class OnePost extends React.Component<{ currentPost: Post }> {
             <Card className="card-box">
                 <CardHeader
                     avatar={
-                        <Avatar aria-label="recipe" className="avatars">
-                            R
-                        </Avatar>
+                        <Avatar alt={olona.name} src={olona.pdp} />
                     }
                     action={
                         <IconButton aria-label="settings">
@@ -94,16 +99,16 @@ export default class OnePost extends React.Component<{ currentPost: Post }> {
                     </Typography>
                 </CardContent>
                 <CardActions disableSpacing>
-                    <IconButton onClick={this.handleLike}>
-                        {this.state.like ? <ThumbUpAltOutlinedIcon className="active" /> : <ThumbUpAltOutlinedIcon />}
+                    <IconButton onClick={this.handleLike.bind(this)}>
+                        {this.state.isLiked ? <ThumbUpAltOutlinedIcon className="active" /> : <ThumbUpAltOutlinedIcon />}
                     </IconButton>
                     {this.props.currentPost.likes}
-                    <IconButton onClick={this.handleDislike}>
-                        {this.state.dislike ? <ThumbDownAltOutlinedIcon className="active" /> : <ThumbDownAltOutlinedIcon />}
+                    <IconButton onClick={this.handleDislike.bind(this)}>
+                        {this.state.isDisliked ? <ThumbDownAltOutlinedIcon className="active" /> : <ThumbDownAltOutlinedIcon />}
                     </IconButton>
                     {this.props.currentPost.dislikes}
                     <IconButton
-                        onClick={this.handleExpandClick}
+                        onClick={this.handleExpandClick.bind(this)}
                         className={this.state.expanded ? "expandOpen" : ""}
                     >
                         <ChatBubbleOutlineOutlinedIcon />
@@ -114,7 +119,7 @@ export default class OnePost extends React.Component<{ currentPost: Post }> {
                 </CardActions>
                 <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
                     <CardContent>
-                        <Comment />
+                        <Comment CurrentPost={this.props.currentPost} />
                     </CardContent>
                 </Collapse>
             </Card>

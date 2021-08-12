@@ -3,46 +3,16 @@ import React from 'react'
 import './Comment.css'
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
-import {
-    withStyles, makeStyles, Theme, createStyles
-
-} from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import mika from '../../images/users/Mika.jpg';
-import zoky from '../../images/users/saka.jpg';
-import { blue } from '@material-ui/core/colors';
-import Fab from '@material-ui/core/Fab';
+import OneComment from '../OneComment/OneComment';
 import SendIcon from '@material-ui/icons/Send';
+import { Post } from '../../models/Post';
+import { MyContext } from '../MyContext';
+import { Commentaire } from '../../models/Commentaire';
+import Button from '@material-ui/core/Button';
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            display: 'flex',
-            '& > *': {
-                margin: theme.spacing(1),
-            },
-        },
-        small: {
-            width: theme.spacing(3),
-            height: theme.spacing(3),
-        },
-        large: {
-            width: theme.spacing(7),
-            height: theme.spacing(7),
-        },
-        comment: {
-            color: 'var(--main-color)',
-            fontWeight: 500,
-            textDecoration: 'underline'
-        },
-        avatar: {
-            backgroundColor: blue[500],
-        },
-        margin: {
-            margin: theme.spacing(1),
-        },
-    }),
-);
 
 const CssTextField = withStyles({
     root: {
@@ -58,47 +28,54 @@ const CssTextField = withStyles({
     },
 })(TextField);
 
-const Comment = () => {
-    const classes = useStyles();
-    return (
-        <React.Fragment>
-            <Typography paragraph><span className={classes.comment}>Commentaires :</span></Typography>
-            <Grid container spacing={1} alignItems="flex-start">
-                <Grid item xs={1}>
-                    <Avatar alt="Mikakely" src={zoky} className={classes.avatar} />
-                </Grid>
-                <Grid item xs={11}>
-                    <Typography variant="subtitle2">
-                        Zoky mpicomenty
-                    </Typography>
-                    <Typography variant="body2">
-                        Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
-                        minutes. Tsaramaso kabaro sosy mahavita sokola milay be ange ry reto. Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae harum nesciunt alias quos explicabo.
-                    </Typography>
-                </Grid>
-            </Grid>
+class Comment extends React.Component<{ CurrentPost: Post }> {
 
+    static contextType = MyContext;
 
-            <Grid container spacing={1} alignItems="flex-end">
-                <Grid item xs={1}>
-                    <Avatar alt="Mikakely" src={mika} />
-                </Grid>
-                <Grid item xs={10}>
-                    <CssTextField
-                        id="comment-input"
-                        label="Votre commentaire"
-                        multiline
-                        fullWidth
-                        maxRows={2}
-                    />
-                </Grid>
-                <Grid xs={1} >
-                    <Fab color="primary" aria-label="add" size="medium"><SendIcon /></Fab>
-                </Grid>
-            </Grid>
+    coms: any;
 
-        </React.Fragment>
-    )
+    handleClick() {
+        const clength: number = this.context.comments.length;
+        const lastindex: number = this.context.comments[clength - 1].id + 1;
+        const newcom: Commentaire = new Commentaire(lastindex, this.props.CurrentPost.id, 5, this.coms.value);
+        this.context.addComment(newcom);
+        this.coms.value = "";
+    }
+
+    render() {
+        let komantera: Commentaire[] = this.context.getCommentsByPostId(this.props.CurrentPost.id);
+        return (
+            <React.Fragment>
+                <Typography paragraph><span className="comment-title">Commentaires :</span></Typography>
+                {komantera.map((comment: Commentaire) => (
+                    <OneComment CurrentComment={comment} />
+                ))}
+
+                <form onSubmit={(e) => { e.preventDefault(); this.handleClick() }}>
+                    <Grid container spacing={1} alignItems="flex-end">
+                        <Grid item xs={1}>
+                            <Avatar alt="RA-MICHAEL" src={mika} />
+                        </Grid>
+
+                        <Grid item xs={10}>
+                            <CssTextField
+                                id="comment-input"
+                                label="Votre commentaire"
+                                multiline
+                                fullWidth
+                                maxRows={2}
+                                inputRef={node => this.coms = node}
+                            />
+                        </Grid>
+                        <Grid xs={1} >
+                            <Button type="submit"><SendIcon fontSize="small" /></Button>
+                        </Grid>
+                    </Grid>
+                </form>
+
+            </React.Fragment>
+        )
+    }
 }
 
 export default Comment
