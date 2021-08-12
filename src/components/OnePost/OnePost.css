@@ -1,0 +1,27 @@
+.card-box {
+  margin-bottom: 40px;
+}
+
+.expandOpen {
+  color: var(--main-color);
+}
+
+.avatars {
+  background: var(--main-color);
+}
+
+.active {
+  color: var(--main-color);
+  animation: zoom 0.5s ease-in-out;
+}
+@keyframes zoom {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

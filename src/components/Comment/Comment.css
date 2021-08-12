@@ -1,0 +1,5 @@
+.comment-title {
+  color: var(--main-color);
+  text-decoration: underline;
+  font-weight: 500;
+}
