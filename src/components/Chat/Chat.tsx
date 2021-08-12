@@ -1,133 +1,141 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
-import Fab from '@material-ui/core/Fab';
 import SendIcon from '@material-ui/icons/Send';
+import Button from '@material-ui/core/Button';
+import './Chat.css'
+import { MyContext } from '../MyContext';
+import { User } from '../../models/User';
+import { Message } from '../../models/Message';
 
-
-const useStyles = makeStyles({
-    chatSection: {
-        width: '100%',
-        height: '80vh'
-    },
-    headBG: {
-        backgroundColor: '#e0e0e0'
-    },
-    borderRight500: {
-        borderRight: '1px solid #e0e0e0'
-    },
-    messageArea: {
-        height: '70vh',
-        overflowY: 'auto'
-    },
+const CssTextField = withStyles({
     root: {
-        maxWidth: 850,
-        margin: 'auto'
+        '& label.Mui-focused': {
+            color: '#03a9f4',
+        },
+        '& .MuiInput-underline:after': {
+            borderBottomColor: '#03a9f4',
+        },
+        '& .MuiInput-underline:hover:before': {
+            borderBottomColor: '#03a9f4',
+        },
     },
-    response: {
-        textAlign: 'right'
+})(TextField);
+
+class Chat extends React.Component {
+
+    static contextType = MyContext;
+
+    message: any;
+
+    handleClick() {
+        const mlength: number = this.context.messages.length;
+        const lastindex: number = this.context.messages[mlength - 1].id + 1;
+        var today = new Date();
+        var time = today.getHours() + ":" + today.getMinutes();
+        const newMes: Message = new Message(lastindex, 1, 4, time, this.message.value);
+        this.context.addMessage(newMes);
+        this.message.value = "";
     }
-});
+    render() {
+        let lista: User[] = this.context.users.filter((user: User) => user.id !== 5)
+        return (
+            <div className="chat-box" style={{ 'marginTop': '120px' }}>
+                <Grid container component={Paper} className="chatSection">
+                    <Grid item xs={3} className="borderRight500">
+                        {lista.map((user: User) => (
+                            <React.Fragment>
+                                <List>
+                                    <ListItem button key={user.id}>
+                                        <ListItemIcon>
+                                            <Avatar alt={user.name} src={user.pdp} />
+                                        </ListItemIcon>
+                                        <ListItemText primary={user.name}></ListItemText>
+                                    </ListItem>
+                                </List>
+                                <Divider />
+                            </React.Fragment>
+                        ))}
 
-const Chat = () => {
-    const classes = useStyles();
+                    </Grid>
+                    <Grid item xs={9}>
+                        <List className="messageArea">
+                            <ListItem key="1">
+                                <Grid container>
+                                    <Grid item xs={12}>
+                                        <ListItemText primary="Manahoana e, vaovao any ?"></ListItemText>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <ListItemText secondary="09:30"></ListItemText>
+                                    </Grid>
+                                </Grid>
+                            </ListItem>
+                            <ListItem key="2">
+                                <Grid container className="response">
+                                    <Grid item xs={12}>
+                                        <ListItemText primary="Salama tsara, tena tsy misy an" ></ListItemText>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <ListItemText secondary="09:31"></ListItemText>
+                                    </Grid>
+                                </Grid>
+                            </ListItem>
+                            <ListItem key="3">
+                                <Grid container>
+                                    <Grid item xs={12}>
+                                        <ListItemText primary="Milay zan, de aona ny androany ?"></ListItemText>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <ListItemText secondary="10:30"></ListItemText>
+                                    </Grid>
+                                </Grid>
+                            </ListItem>
+                            {this.context.messages.map((message: Message) => (
+                                <ListItem key="4">
+                                    <Grid container className="response">
+                                        <Grid item xs={12}>
+                                            <ListItemText primary={message.texte}></ListItemText>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <ListItemText secondary={message.time}></ListItemText>
+                                        </Grid>
+                                    </Grid>
+                                </ListItem>
+                            ))}
+                        </List>
+                        <Divider />
+                        <form onSubmit={(e) => { e.preventDefault(); this.handleClick() }}>
+                            <Grid container spacing={1} alignItems="flex-end">
 
-    return (
-        <div className={classes.root}>
-            <Grid container>
-                <Grid item xs={12} >
-                    <Typography variant="h5" className="header-message">Chat</Typography>
-                </Grid>
-            </Grid>
-            <Grid container component={Paper} className={classes.chatSection}>
-                <Grid item xs={3} className={classes.borderRight500}>
-                    <List>
-                        <ListItem button key="RemySharp">
-                            <ListItemIcon>
-                                <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
-                            </ListItemIcon>
-                            <ListItemText primary="John Wick"></ListItemText>
-                        </ListItem>
-                    </List>
-                    <Divider />
-                    {/* <Grid item xs={12} style={{ padding: '10px' }}>
-                        <TextField id="outlined-basic-email" label="Search" variant="outlined" fullWidth />
-                    </Grid>
-                    <Divider /> */}
-                    <List>
-                        <ListItem button key="RemySharp">
-                            <ListItemIcon>
-                                <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/2.jpg" />
-                            </ListItemIcon>
-                            <ListItemText primary="John Snow"></ListItemText>
-                        </ListItem>
-                    </List>
-                    <Divider />
-                    <List>
-                        <ListItem button key="RemySharp">
-                            <ListItemIcon>
-                                <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/3.jpg" />
-                            </ListItemIcon>
-                            <ListItemText primary="Alice"></ListItemText>
-                        </ListItem>
-                    </List>
-                </Grid>
-                <Grid item xs={9}>
-                    <List className={classes.messageArea}>
-                        <ListItem key="1">
-                            <Grid container>
-                                <Grid item xs={12}>
-                                    <ListItemText primary="Hey man, What's up ?"></ListItemText>
+                                <Grid item xs={11}>
+                                    <CssTextField
+                                        id="comment-input"
+                                        label="Votre message"
+                                        multiline
+                                        fullWidth
+                                        maxRows={2}
+                                        inputRef={node => this.message = node}
+                                    />
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <ListItemText secondary="09:30"></ListItemText>
+                                <Grid item xs={1} >
+                                    <Button type="submit"><SendIcon fontSize="small" /></Button>
                                 </Grid>
                             </Grid>
-                        </ListItem>
-                        <ListItem key="2">
-                            <Grid container className={classes.response}>
-                                <Grid item xs={12}>
-                                    <ListItemText primary="Hey, Iam Good! What about you ?" ></ListItemText>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <ListItemText secondary="09:31"></ListItemText>
-                                </Grid>
-                            </Grid>
-                        </ListItem>
-                        <ListItem key="3">
-                            <Grid container>
-                                <Grid item xs={12}>
-                                    <ListItemText primary="Cool. i am good, let's catch up!"></ListItemText>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <ListItemText secondary="10:30"></ListItemText>
-                                </Grid>
-                            </Grid>
-                        </ListItem>
-                    </List>
-                    <Divider />
-                    <Grid container>
-                        <Grid item xs={11}>
-                            <TextField id="outlined-basic-email" label="Saisir un message" fullWidth />
-                        </Grid>
-                        <Grid xs={1} >
-                            <Fab color="primary" aria-label="add"><SendIcon /></Fab>
-                        </Grid>
+                        </form>
                     </Grid>
                 </Grid>
-            </Grid>
-        </div>
-    );
+            </div >
+        );
+    }
 }
 
 export default Chat;

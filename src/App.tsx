@@ -16,6 +16,8 @@ import { User } from './models/User';
 import { MyContext } from './components/MyContext';
 import { dataComment } from './data/dataComment';
 import { Commentaire } from './models/Commentaire';
+import { dataMessage } from './data/dataMessage';
+import { Message } from './models/Message';
 
 class App extends React.Component {
 
@@ -23,6 +25,7 @@ class App extends React.Component {
     users: dataUser as User[],
     posts: dataPost as Post[],
     comments: dataComment as Commentaire[],
+    messages: dataMessage as Message[],
     getUserById(id: number): User {
       return this.users.find(
         user => {
@@ -56,6 +59,13 @@ class App extends React.Component {
       updatedArray.unshift(newPost);
       this.setState({
         posts: updatedArray
+      });
+    },
+    addMessage: (newMes: Message) => {
+      const updatedArray = this.state.messages;
+      updatedArray.push(newMes);
+      this.setState({
+        messages: updatedArray
       });
     },
   };
