@@ -28,10 +28,11 @@ export default class OnePost extends React.Component<{ currentPost: Post }> {
 
     static contextType = MyContext;
 
+    isLiked: boolean = false;
+    isDisliked: boolean = false;
+
     state = {
         expanded: false,
-        isLiked: false,
-        isDisliked: false
     }
 
     handleExpandClick() {
@@ -41,40 +42,31 @@ export default class OnePost extends React.Component<{ currentPost: Post }> {
     }
 
     handleLike() {
-        this.setState({
-            isLiked: !(this.state.isLiked)
-        });
-        console.log("Eto tsika" + this.state.isLiked);
-        if (this.state.isLiked) {
+        this.isLiked = !this.isLiked;
+        if (this.isLiked) {
             this.props.currentPost.likes++;
-            if (this.state.isDisliked) {
+            if (this.isDisliked) {
                 this.props.currentPost.dislikes--;
-                this.setState({
-                    isDislike: false
-                })
+                this.isDisliked = false;
             }
-        }
-        else {
+        } else {
             this.props.currentPost.likes--;
         }
+        this.context.postUpdate(this.props.currentPost);
     }
 
     handleDislike() {
-        this.setState({
-            isDisliked: !this.state.isLiked
-        })
-        if (this.state.isDisliked) {
+        this.isDisliked = !this.isDisliked;
+        if (this.isDisliked) {
             this.props.currentPost.dislikes++;
-            if (this.state.isLiked) {
+            if (this.isLiked) {
                 this.props.currentPost.likes--;
-                this.setState({
-                    isLiked: false
-                })
+                this.isLiked = false;
             }
-        }
-        else {
+        } else {
             this.props.currentPost.dislikes--;
         }
+        this.context.postUpdate(this.props.currentPost);
     }
 
     render() {
@@ -100,11 +92,11 @@ export default class OnePost extends React.Component<{ currentPost: Post }> {
                 </CardContent>
                 <CardActions disableSpacing>
                     <IconButton onClick={this.handleLike.bind(this)}>
-                        {this.state.isLiked ? <ThumbUpAltOutlinedIcon className="active" /> : <ThumbUpAltOutlinedIcon />}
+                        {this.isLiked ? <ThumbUpAltOutlinedIcon className="active" /> : <ThumbUpAltOutlinedIcon />}
                     </IconButton>
                     {this.props.currentPost.likes}
                     <IconButton onClick={this.handleDislike.bind(this)}>
-                        {this.state.isDisliked ? <ThumbDownAltOutlinedIcon className="active" /> : <ThumbDownAltOutlinedIcon />}
+                        {this.isDisliked ? <ThumbDownAltOutlinedIcon className="active" /> : <ThumbDownAltOutlinedIcon />}
                     </IconButton>
                     {this.props.currentPost.dislikes}
                     <IconButton

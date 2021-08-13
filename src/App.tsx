@@ -68,6 +68,14 @@ class App extends React.Component {
         messages: updatedArray
       });
     },
+    postUpdate: (updatedValue: Post) => {
+      const newPostArray = this.state.posts;
+      const index = newPostArray.findIndex(post => post.id === updatedValue.id);
+      newPostArray[index] = updatedValue;
+      this.setState({
+        posts: newPostArray
+      });
+    }
   };
 
   render() {

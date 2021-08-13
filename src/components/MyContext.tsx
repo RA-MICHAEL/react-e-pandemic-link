@@ -8,5 +8,5 @@ export const MyContext = React.createContext({
     users: [] as User[],
     posts: [] as Post[],
     comments: [] as Commentaire[],
-    messages: [] as Message[]
+    messages: [] as Message[],
 });
